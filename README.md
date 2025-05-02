@@ -1,0 +1,109 @@
+# Crawford's Single-Case T-Test Shiny App
+Estimation of Crawford's T test and Bayesian test
+
+This repository contains the code for a Shiny web application (`t_crawford.R`) designed to compare a single individual's score (e.g., a patient) against a small control or normative sample using Crawford's methods. It calculates and interprets both the frequentist t-test proposed by Crawford & Howell (1998) and the Bayesian approach developed by Crawford & Garthwaite (2007).
+
+The app provides a user-friendly interface for inputting data and visualizes the comparison using a density plot.
+
+## Features
+
+*   **Crawford's Frequentist Test:** Calculates the modified t-test suitable for comparing a single case to a small control sample (`psycho::crawford.test.freq`).
+*   **Crawford's Bayesian Test:** Calculates the Bayesian equivalent, providing credible intervals for the difference and estimating the abnormality of the patient's score (`psycho::crawford.test`).
+*   **Flexible Input:** Allows users to provide control group data either as:
+    *   Summary statistics (Mean, Standard Deviation, N).
+    *   Individual raw scores (comma-separated).
+*   **Visualization:** Generates a density plot (`ggplot2`) showing the distribution of control scores (or simulated scores based on summary stats), the control group mean, and the individual patient's score.
+*   **Automated Interpretation:** Provides textual interpretations of both the frequentist and Bayesian test results, drawing directly from the output of the `psycho` package functions.
+*   **Integrated Citations:** Automatically includes relevant citations for the methods, packages, and the app itself in the output.
+
+## How it Works
+
+1.  **Input:** The user provides the patient's score and specifies the control group data format (summary statistics or individual scores).
+2.  **Data Handling:**
+    *   If **individual scores** are provided, they are used directly to calculate the control mean and SD. These scores are used for the `psycho::crawford.test.freq` and for generating the density plot. The calculated mean, SD, and N are used for `psycho::crawford.test`.
+    *   If **summary statistics** (Mean, SD, N) are provided, they are used directly for the Bayesian `psycho::crawford.test`. **Crucially**, for the frequentist test (`psycho::crawford.test.freq`) and the density plot (which require individual scores), the app *simulates* normally distributed scores based on the provided Mean, SD, and N. *Therefore, the frequentist test result and the plot in this mode are based on these simulated data, while the Bayesian result uses the exact summary statistics provided.*
+3.  **Calculation:** The app calls `psycho::crawford.test.freq()` and `psycho::crawford.test()` with the appropriate data.
+4.  **Output:** The results are displayed:
+    *   A density plot visualizing the patient's score relative to the control distribution.
+    *   A textual summary combining the interpretations from both tests and relevant citations.
+
+## Usage
+
+### Running Locally
+
+1.  **Prerequisites:** Ensure you have R and RStudio (recommended) installed.
+2.  **Install Packages:** Open R/RStudio and install the required packages if you haven't already:
+    ```R
+    # Note: 'psycho' might require installation from GitHub if not on CRAN or if you need the latest version
+    # install.packages("remotes") # If you don't have remotes
+    # remotes::install_github("neuropsychology/psycho.R") 
+    
+    install.packages(c("shiny", "dplyr", "ggplot2", "psycho")) 
+    ```
+    
+3.  **Clone Repository:** Clone this repository to your local machine.
+    ```bash
+    git clone <repository-url> 
+    cd <repository-directory>
+    ```
+4.  **Run App:**
+    *   Navigate to the directory containing the `t_crawford.R` file within RStudio or your R console.
+    *   Use the `runApp()` function:
+        ```R
+        shiny::runApp("t_crawford.R")
+        ```
+
+### Using the Deployed App
+
+Access the live application via the link: https://vmsfue-frederico-pedrosa.shinyapps.io/t_crawford/ 
+
+## Input Requirements
+
+Users need to provide the following information in the sidebar panel:
+
+1.  **Patient's Score:** The single score of the individual being compared.
+2.  **Input Type:** Radio button to select "Mean and Standard Deviation" or "Individual Scores" for the control data.
+3.  **Control Data (Conditional):**
+    *   If "Mean and Standard Deviation" is selected: Mean, SD, and N of the control group.
+    *   If "Individual Scores" is selected: A comma-separated string of the control participants' scores (e.g., `15, 18, 17, 14, 19, 16`).
+
+## Output Interpretation
+
+The main panel displays:
+
+*   **Density Plot:** A `ggplot2` visualization showing:
+    *   The estimated probability density of the control scores (blue shaded area).
+    *   A dashed vertical line indicating the mean of the control scores.
+    *   A dotted vertical line indicating the patient's score.
+*   **Interpretation:** An HTML output generated by the `interpret_results` function, containing:
+    *   Textual summaries of the frequentist and Bayesian test results provided by the `psycho` package functions.
+    *   Full citations for the app, the statistical methods, and the key R packages used.
+
+## Technology Stack
+
+*   R
+*   Shiny
+*   dplyr
+*   psycho
+*   ggplot2
+
+## How to Cite
+
+### Citing this Shiny App:
+Pedrosa, F. G. (2025). Estimation of Crawford's t-test and Bayesian test. [Software]. https://vmsfue-frederico-pedrosa.shinyapps.io/t_crawford 
+
+### References:
+*   Crawford, J. R., & Garthwaite, P. H. (2007). Comparison of a single case to a control or normative sample in neuropsychology: development of a Bayesian approach. *Cognitive Neuropsychology*, *24*(4), 343–372. https://doi.org/10.1080/02643290701290146
+*   Crawford, J. R., & Howell, D. C. (1998). Comparing an individual's test score against norms derived from small samples. *The Clinical Neuropsychologist*, *12*(4), 482–486. https://doi.org/10.1076/clin.12.4.482.7241
+*   Makowski, D., Ben-Shachar, M. S., Patil, I., & Lüdecke, D. (2019). psycho: An R package for experimental psychology. *Journal of Open Source Software*, *4*(44), 1704. https://doi.org/10.21105/joss.01704 *(or cite Makowski, 2018 as in your code)*
+*   Wickham, H. (2016). *ggplot2: Elegant Graphics for Data Analysis*. Springer-Verlag New York. https://doi.org/10.1007/978-3-319-24277-4
+
+## Author
+
+*   **Prof. Dr. Frederico G. Pedrosa**
+*   fredericopedrosa@ufmg.br
+
+## License
+
+This project is licensed under a modified version of the GNU General Public License v3.0.  
+Commercial use is not permitted without explicit written permission from the author
